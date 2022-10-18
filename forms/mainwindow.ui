@@ -148,6 +148,7 @@
     <addaction name="actionSceneFountain"/>
     <addaction name="actionBounding_Box"/>
     <addaction name="actionSphere"/>
+    <addaction name="actionCloth"/>
    </widget>
    <widget class="QMenu" name="menuCamera">
     <property name="title">
@@ -200,6 +201,11 @@
   <action name="actionSphere">
    <property name="text">
     <string>Sphere</string>
+   </property>
+  </action>
+  <action name="actionCloth">
+   <property name="text">
+    <string>Cloth</string>
    </property>
   </action>
  </widget>

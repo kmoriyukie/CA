@@ -3,7 +3,7 @@
 #include "model.h"
 #include <QOpenGLFunctions_3_3_Core>
 #include <QOpenGLVersionFunctionsFactory>
-
+#include "myobject.h"
 
 
 SceneBoundingBox::SceneBoundingBox() {
@@ -16,10 +16,10 @@ SceneBoundingBox::SceneBoundingBox() {
 SceneBoundingBox::~SceneBoundingBox() {
     if (widget)     delete widget;
     if (shader)     delete shader;
-    if (vaoFloor)   delete vaoFloor;
-    if (vaoSphereS) delete vaoSphereS;
+    if (sphere)     delete sphere;
+    if (floor)      delete floor;
+    if (cube)    delete cube;
     if (fGravity)   delete fGravity;
-    if (vaoCube)    delete vaoCube;
 }
 
 
@@ -28,19 +28,14 @@ void SceneBoundingBox::initialize() {
     shader = glutils::loadShaderProgram(":/shaders/phong.vert", ":/shaders/phong.frag");
 
     // create floor VAO
-    Model quad = Model::createQuad();
-    vaoFloor = glutils::createVAO(shader, &quad);
-    glutils::checkGLError();
+    floor = new Floor(shader);
 
     // create sphere VAOs
-    Model sphere = Model::createIcosphere(1);
-    vaoSphereS = glutils::createVAO(shader, &sphere);
-    numFacesSphereS = sphere.numFaces();
+    sphere = new Sphere(shader);
     glutils::checkGLError();
 
     // Create Cube BB
-    Model cube = Model::createCube();
-    vaoCube = glutils::createVAO(shader, &cube);
+    cube = new Cube(shader);
     glutils::checkGLError();
 
     // create forces
@@ -50,6 +45,7 @@ void SceneBoundingBox::initialize() {
     system.addForce(fDrag);
 
     sizeBB = 10;
+
     // scene
     SourcePos = Vec3(0, 40, 0);
 
@@ -117,44 +113,21 @@ void SceneBoundingBox::paint(const Camera& camera) {
     shader->setUniformValueArray("lightColor", lightColor, numLights);
 
     // draw floor
-    vaoFloor->bind();
-    QMatrix4x4 modelMat;
-    modelMat.scale(100, 1, 100);
-    shader->setUniformValue("ModelMatrix", modelMat);
-    shader->setUniformValue("matdiff", 0.8f, 0.8f, 0.8f);
-    shader->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
-    shader->setUniformValue("matshin", 0.0f);
-    glFuncs->glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-    vaoCube->bind();
-    QMatrix4x4 modelMat2;
+    floor->draw(glFuncs, Vec3(100, 1, 100));
 
-    modelMat2.translate(0, std::abs(sizeBB), 0);
-    modelMat2.scale(sizeBB, sizeBB, sizeBB);
+
+    cube->draw(glFuncs, Vec3(sizeBB, sizeBB, sizeBB));
     collider.setBB(Vec3(sizeBB, sizeBB, sizeBB), Vec3(0, sizeBB, 0));
-    shader->setUniformValue("ModelMatrix", modelMat2);
-    shader->setUniformValue("matdiff", 1.f, 1.f, 1.f);
-    shader->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
-    shader->setUniformValue("matshin", 0.0f);
-    glFuncs->glDrawElements(GL_LINES, 36, GL_UNSIGNED_INT, 0);
 
+    QMatrix4x4 modelMat;
     // draw the different spheres
-    vaoSphereS->bind();
     for (const Particle* particle : system.getParticles()) {
         Vec3   p = particle->pos;
         Vec3   c = particle->color;
         double r = particle->radius;
 
-        modelMat = QMatrix4x4();
-        modelMat.translate(p[0], p[1], p[2]);
-        modelMat.scale(r);
-        shader->setUniformValue("ModelMatrix", modelMat);
-
-        shader->setUniformValue("matdiff", GLfloat(c[0]), GLfloat(c[1]), GLfloat(c[2]));
-        shader->setUniformValue("matspec", 1.0f, 1.0f, 1.0f);
-        shader->setUniformValue("matshin", 100.f);
-
-        glFuncs->glDrawElements(GL_TRIANGLES, 3*numFacesSphereS, GL_UNSIGNED_INT, 0);
+        sphere->draw(glFuncs, Vec3(r, r, r), p, c);
     }
 
     shader->release();

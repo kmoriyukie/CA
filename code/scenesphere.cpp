@@ -112,18 +112,8 @@ void SceneSphere::paint(const Camera& camera) {
     shader->setUniformValueArray("lightPos", lightPosCam, numLights);
     shader->setUniformValueArray("lightColor", lightColor, numLights);
 
-    // draw floor
-//    vaoFloor->bind();
     QMatrix4x4 modelMat;
-//    modelMat.scale(100, 1, 100);
-//    shader->setUniformValue("ModelMatrix", modelMat);
-//    shader->setUniformValue("matdiff", 0.8f, 0.8f, 0.8f);
-//    shader->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
-//    shader->setUniformValue("matshin", 0.0f);
-//    glFuncs->glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
-
-    // draw the different spheres
     vaoSphereS->bind();
 
     modelMat = QMatrix4x4();

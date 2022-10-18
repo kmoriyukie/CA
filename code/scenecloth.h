@@ -1,23 +1,29 @@
-#ifndef SCENEBoundingBox_H
-#define SCENEBoundingBox_H
+#ifndef SceneCloth_H
+#define SceneCloth_H
 
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
+#include <QOpenGLBuffer>
 #include <list>
 #include "scene.h"
-#include "widgetboundingbox.h"
+#include "widgetcloth.h"
 #include "particlesystem.h"
 #include "integrators.h"
 #include "colliders.h"
 #include "myobject.h"
 
-class SceneBoundingBox : public Scene
+class SceneCloth : public Scene
 {
     Q_OBJECT
 
 public:
-    SceneBoundingBox();
-    virtual ~SceneBoundingBox();
+    SceneCloth();
+
+    void createParticles();
+    void updateIndices();
+    void updateCoordsBuffer();
+
+    virtual ~SceneCloth();
 
     virtual void initialize();
     virtual void reset();
@@ -39,20 +45,33 @@ public slots:
     void updateSimParams();
 
 protected:
-    WidgetBoundingBox* widget = nullptr;
+    WidgetCloth* widget = nullptr;
 
     QOpenGLShaderProgram* shader = nullptr;
 
-    Cube *cube = nullptr;
-    Floor *floor = nullptr;
+    QOpenGLShaderProgram* shaderSphere = nullptr;
+
+    QOpenGLVertexArrayObject* vaoMesh   = nullptr;
+    QOpenGLBuffer * vboMesh = nullptr;
+    QOpenGLBuffer * iboMesh = nullptr;
+    QOpenGLBuffer * normMesh = nullptr;
+
     Sphere *sphere = nullptr;
+
+
+    unsigned int numFacesSphereS = 0;
+    int numMeshIndices = 0;
+    int numParticlesX = 0;
+    int numParticlesY = 0;
+    int numParticles = 0;
+
 
     IntegratorEuler integrator;
     ParticleSystem system;
     std::list<Particle*> deadParticles;
     ForceConstAcceleration* fGravity;
     ForceDrag *fDrag;
-    ColliderBB collider;
+    ColliderPlane colliderFloor;
 
     double kBounce, kFriction;
     double emitRate;
@@ -60,9 +79,8 @@ protected:
 
     bool withDrag;
 
-    Vec3 BoundingBoxPos, SourcePos;
+    Vec3 fountainPos;
     int mouseX, mouseY;
-    int sizeBB;
 };
 
-#endif // SCENEBoundingBox_H
+#endif // SceneCloth_H
