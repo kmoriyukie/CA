@@ -15,8 +15,8 @@ SceneCloth::SceneCloth() {
 SceneCloth::~SceneCloth() {
     if (widget)     delete widget;
     if (shader)     delete shader;
-    if(sphere)   delete sphere;
-    if (vaoMesh)    delete vaoMesh;
+    if(sphere)      delete sphere;
+    if (cloth)      delete cloth;
     if (fGravity)   delete fGravity;
 }
 
@@ -30,38 +30,17 @@ void SceneCloth::initialize() {
     glutils::checkGLError();
 
     shader->bind();
-    vaoMesh = new QOpenGLVertexArrayObject();
-    vaoMesh->create();
-    vaoMesh->bind();
+    numParticlesX = 5;
+    numParticlesY = 10;
 
-    vboMesh = new QOpenGLBuffer(QOpenGLBuffer::Type::VertexBuffer);
-    vboMesh->create();
-    vboMesh->bind();
-    vboMesh->setUsagePattern(QOpenGLBuffer::UsagePattern::DynamicDraw);
-    vboMesh->allocate(1000*1000*3*3*sizeof(float));
-
-    shader->setAttributeBuffer("vertex", GL_FLOAT, 0, 3, 0);
-    shader->enableAttributeArray("vertex");
-
-    iboMesh = new QOpenGLBuffer(QOpenGLBuffer::Type::IndexBuffer);
-    iboMesh->create();
-    iboMesh->bind();
-    iboMesh->setUsagePattern(QOpenGLBuffer::UsagePattern::DynamicDraw);
-    iboMesh->allocate(1000*1000*2*3*sizeof(int));
-    //iboMesh->release();
-
-    vaoMesh->release();
+    cloth = new Cloth(shader, numParticlesX, numParticlesY);
     glutils::checkGLError();
-    //shader->release();
 
     fGravity = new ForceConstAcceleration();
     system.addForce(fGravity);
 
     fDrag = new ForceDrag();
     system.addForce(fDrag);
-
-    numParticlesX = 5;
-    numParticlesY = 10;
 
     numParticles = numParticlesX * numParticlesY;
     numMeshIndices = (numParticlesX - 1) * (numParticlesY - 1) * 2 * 3;
@@ -106,7 +85,7 @@ void SceneCloth::updateSimParams()
     emitRate = 100;
 
 
-    updateIndices();
+    cloth->updateIndices(numParticlesX, numParticlesY);
 
 }
 
@@ -137,27 +116,12 @@ void SceneCloth::paint(const Camera& camera) {
     shader->setUniformValueArray("lightPos", lightPosCam, numLights);
     shader->setUniformValueArray("lightColor", lightColor, numLights);
 
-    updateCoordsBuffer();
-    shader->setUniformValue("ModelMatrix", QMatrix4x4());
-    shader->setUniformValue("matspecFront", 1.0f, 1.0f, 1.0f);
-    shader->setUniformValue("radius", 3);
-    shader->setUniformValue("matdiffFront", GLfloat(1.0), GLfloat(1.0), GLfloat(0));
-    shader->setUniformValue("matshinFront", 100.f);
-    shader->setUniformValue("matspecBack", 0.0f, 0.0f, 0.0f);
-    shader->setUniformValue("matdiffBack", GLfloat(0.0), GLfloat(1.0), GLfloat(0));
-    shader->setUniformValue("matshinBack", 0.f);
-
-    vaoMesh->bind();
-    glFuncs->glDrawElements(GL_TRIANGLES, numMeshIndices, GL_UNSIGNED_INT, nullptr);
-//    glFuncs->glDrawArrays(GL_TRIANGLES, 0, numParticles);
-
-    vaoMesh->release();
+    cloth->updatePositions(system);
+    cloth->draw(glFuncs, Vec3(0,0,0));
     glutils::checkGLError();
-
     shader->release();
 
     shaderSphere->bind();
-
     shaderSphere->setUniformValue("ProjMatrix", camProj);
     shaderSphere->setUniformValue("ViewMatrix", camView);
     shaderSphere->setUniformValue("numLights", numLights);
@@ -188,7 +152,6 @@ void SceneCloth::update(double dt) {
 //        collider.collision(p, kBounce, kFriction);
 //    }
 
-    // check dead particles
 
 }
 
@@ -233,51 +196,7 @@ void SceneCloth::createParticles(){
         }
     }
 
-    updateIndices();
+    cloth->updateIndices(numParticlesX, numParticlesY);
 
     glutils::checkGLError();
-}
-
-void SceneCloth::updateIndices(){
-    iboMesh->bind();
-    numMeshIndices = (numParticlesX - 1) * (numParticlesY - 1) * 2 * 3;
-    int * indices = new int[numMeshIndices];
-    int idx = 0;
-    for (int i = 0; i < numParticlesX - 1; i++){
-        for(int j = 0; j < numParticlesY - 1; j++){
-            indices[idx + 0] = (i + 0)*numParticlesY + j;
-            indices[idx + 1] = (i + 1)*numParticlesY + j;
-            indices[idx + 2] = (i + 0)*numParticlesY + j + 1;
-            indices[idx + 3] = (i + 0)*numParticlesY + j + 1;
-            indices[idx + 4] = (i + 1)*numParticlesY + j;
-            indices[idx + 5] = (i + 1)*numParticlesY + j + 1;
-            idx +=6;
-        }
-    }
-    void * bufptr = iboMesh->mapRange(0, numMeshIndices*sizeof(int), QOpenGLBuffer::RangeInvalidateBuffer | QOpenGLBuffer::RangeWrite);
-    memcpy(bufptr, (void*)(indices), numMeshIndices*sizeof(int));
-
-    iboMesh->unmap();
-    iboMesh->release();
-    delete[] indices;
-    glutils::checkGLError();
-}
-
-void SceneCloth::updateCoordsBuffer(){
-    vboMesh->bind();
-    float* pos = new float[3*numParticles];
-    for (int i = 0; i < numParticles; i++){
-        pos[3*i + 0] = system.getParticle(i)->pos.x();
-        pos[3*i + 1] = system.getParticle(i)->pos.y();
-        pos[3*i + 2] = system.getParticle(i)->pos.z();
-    }
-
-
-    void *bufptr = vboMesh->mapRange(0, 3*numParticles*sizeof(float), QOpenGLBuffer::RangeInvalidateBuffer | QOpenGLBuffer::RangeWrite);
-    memcpy(bufptr, (void*)(pos), 3*numParticles*sizeof(float));
-
-
-    vboMesh->unmap();
-    vboMesh->release();
-    delete[] pos;
 }

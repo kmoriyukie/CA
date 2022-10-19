@@ -62,9 +62,6 @@ void ColliderBB::setBB(Vec3 scale, Vec3 translation)
     calculatePlane();
 }
 
-bool ColliderBB::testCollision(const Particle* p) const{
-    return true;
-}
 
 bool intersect(double a, double b, double c, double d, double x, double y, bool i){
     if((a < x && b >= x) || (b < x && a >= x))
@@ -136,19 +133,6 @@ void ColliderBB::collision(Particle* p, double kElastic, double kFriction) const
 }
 
 
-
-void ColliderBB::resolveCollision(Particle* p, double kElastic, double kFriction) const
-{
-}
-
-bool ColliderSphere::testCollision(const Particle *p) const{
-    return true;
-}
-
-void ColliderSphere::resolveCollision(Particle* p, double kElastic, double kFriction) const
-{
-}
-
 double distance(Vec3 A, Vec3 B){
     return std::sqrt((A - B).dot((A-B)));
 }
@@ -182,4 +166,3 @@ void ColliderSphere::collision(Particle *p, double kElastic, double kFriction){
     p->vel = p->vel - (1 + kElastic)*n_plane.dot(p->vel)*n_plane - kFriction*(p->vel - n_plane.dot(p->vel)*n_plane);
 
 }
-

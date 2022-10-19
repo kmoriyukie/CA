@@ -6,6 +6,7 @@
 #include <QOpenGLFunctions_3_3_Core>
 #include <QOpenGLBuffer>
 #include "defines.h"
+#include "particlesystem.h"
 
 class myObject
 {
@@ -23,7 +24,7 @@ public:
 class Cube : public myObject{
 public:
     Cube(QOpenGLShaderProgram *sh);
-    virtual ~Cube (){};
+    virtual ~Cube (){delete vao;};
     virtual void draw(QOpenGLFunctions_3_3_Core* &glFuncs, Vec3 size);
 protected:
 };
@@ -31,14 +32,14 @@ protected:
 class Floor : public myObject{
 public:
     Floor(QOpenGLShaderProgram *sh);
-    virtual ~Floor (){};
+    virtual ~Floor (){delete vao;};
     virtual void draw(QOpenGLFunctions_3_3_Core* &glFuncs, Vec3 size);
 };
 
 class Sphere : public myObject{
 public:
     Sphere(QOpenGLShaderProgram *sh);
-    virtual ~Sphere (){};
+    virtual ~Sphere (){delete vao;};
     virtual void draw(QOpenGLFunctions_3_3_Core* &glFuncs, Vec3 size);
     void draw(QOpenGLFunctions_3_3_Core* &glFuncs, Vec3 size, Vec3 pos, Vec3 color);
 protected:
@@ -47,15 +48,19 @@ protected:
 
 class Cloth : public myObject{
 public:
-    Cloth(QOpenGLShaderProgram *sh);
-    virtual ~Cloth (){};
+    Cloth(QOpenGLShaderProgram *sh, int x, int y);
+    virtual ~Cloth (){delete vao; delete vbo; delete ibo;};
     virtual void draw(QOpenGLFunctions_3_3_Core* &glFuncs, Vec3 size);
 
-    void update(int x, int y);
+    void updateIndices(int x, int y);
+    void updatePositions(ParticleSystem &system);
 protected:
 
     QOpenGLBuffer * vbo = nullptr;
     QOpenGLBuffer * ibo = nullptr;
+
+    int numMeshIndices = 0;
+    int numParticles = 0;
 };
 
 #endif // MYOBJECT_H

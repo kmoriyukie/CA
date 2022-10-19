@@ -12,6 +12,7 @@ VPATH += code
 SOURCES += \
     code/camera.cpp \
     code/colliders.cpp \
+    code/constraints.cpp \
     code/forces.cpp \
     code/glutils.cpp \
     code/glwidget.cpp \
@@ -34,6 +35,7 @@ SOURCES += \
 HEADERS += \
     code/camera.h \
     code/colliders.h \
+    code/constraints.h \
     code/defines.h \
     code/forces.h \
     code/glutils.h \

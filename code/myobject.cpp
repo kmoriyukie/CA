@@ -2,6 +2,7 @@
 #include "model.h"
 #include "glutils.h"
 
+
 Cube::Cube(QOpenGLShaderProgram *sh){
     this->shader = sh;
 
@@ -78,7 +79,7 @@ void Sphere::draw(QOpenGLFunctions_3_3_Core* &glFuncs, Vec3 size){
     vao->release();
 }
 
-Cloth::Cloth(QOpenGLShaderProgram *sh){
+Cloth::Cloth(QOpenGLShaderProgram *sh, int x, int y){
     shader = sh;
 
     vao = new QOpenGLVertexArrayObject();
@@ -101,11 +102,13 @@ Cloth::Cloth(QOpenGLShaderProgram *sh){
     ibo->allocate(1000*1000*2*3*sizeof(int));
 
     vao->release();
+    updateIndices(x, y);
 }
 
-void Cloth::update(int x, int y){
+void Cloth::updateIndices(int x, int y){
     ibo->bind();
-    int numMeshIndices = (x - 1) * (y - 1) * 2 * 3;
+    numMeshIndices = (x - 1) * (y - 1) * 2 * 3;
+    numParticles = x*y;
     int * indices = new int[numMeshIndices];
     int idx = 0;
     for (int i = 0; i < x - 1; i++){
@@ -119,8 +122,8 @@ void Cloth::update(int x, int y){
             idx +=6;
         }
     }
-    void * bufptr = ibo->mapRange(0, sizeof(indices), QOpenGLBuffer::RangeInvalidateBuffer | QOpenGLBuffer::RangeWrite);
-    memcpy(bufptr, (void*)(indices), sizeof(indices));
+    void * bufptr = ibo->mapRange(0, numMeshIndices*sizeof(int), QOpenGLBuffer::RangeInvalidateBuffer | QOpenGLBuffer::RangeWrite);
+    memcpy(bufptr, (void*)(indices), numMeshIndices*sizeof(int));
 
     ibo->unmap();
     ibo->release();
@@ -129,25 +132,38 @@ void Cloth::update(int x, int y){
 }
 
 
+void Cloth::updatePositions(ParticleSystem &system){
+    vbo->bind();
+    float* pos = new float[3*numParticles];
+    for (int i = 0; i < numParticles; i++){
+        pos[3*i + 0] = system.getParticle(i)->pos.x();
+        pos[3*i + 1] = system.getParticle(i)->pos.y();
+        pos[3*i + 2] = system.getParticle(i)->pos.z();
+    }
+
+
+    void *bufptr = vbo->mapRange(0, 3*numParticles*sizeof(float), QOpenGLBuffer::RangeInvalidateBuffer | QOpenGLBuffer::RangeWrite);
+    memcpy(bufptr, (void*)(pos), 3*numParticles*sizeof(float));
+
+
+    vbo->unmap();
+    vbo->release();
+    delete[] pos;
+    glutils::checkGLError();
+}
+
 void Cloth::draw(QOpenGLFunctions_3_3_Core* &glFuncs, Vec3 size){
-//    vbo->bind();
-//    float* pos = new float[3*size.x()];
-//    for (int i = 0; i < size.x(); i++){
-//        pos[3*i + 0] = system.getParticle(i)->pos.x();
-//        pos[3*i + 1] = system.getParticle(i)->pos.y();
-//        pos[3*i + 2] = system.getParticle(i)->pos.z();
+    shader->setUniformValue("ModelMatrix", QMatrix4x4());
+    shader->setUniformValue("matspecFront", 1.0f, 1.0f, 1.0f);
+    shader->setUniformValue("radius", 3);
+    shader->setUniformValue("matdiffFront", GLfloat(1.0), GLfloat(1.0), GLfloat(0));
+    shader->setUniformValue("matshinFront", 100.f);
+    shader->setUniformValue("matspecBack", 0.0f, 0.0f, 0.0f);
+    shader->setUniformValue("matdiffBack", GLfloat(0.0), GLfloat(1.0), GLfloat(0));
+    shader->setUniformValue("matshinBack", 0.f);
 
-////        pos[3*i + 3] = 0;
-////        pos[3*i + 4] = 1;
-////        pos[3*i + 5] = 0;
-//    }
-
-
-//    void *bufptr = vboMesh->mapRange(0, sizeof(pos), QOpenGLBuffer::RangeInvalidateBuffer | QOpenGLBuffer::RangeWrite);
-//    memcpy(bufptr, (void*)(pos), sizeof(pos));
-
-
-//    vboMesh->unmap();
-//    vboMesh->release();
-//    delete[] pos;
+    vao->bind();
+    glFuncs->glDrawElements(GL_TRIANGLES, numMeshIndices, GL_UNSIGNED_INT, nullptr);
+    vao->release();
+    glutils::checkGLError();
 }

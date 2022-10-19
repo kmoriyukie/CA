@@ -51,10 +51,9 @@ protected:
 
     QOpenGLShaderProgram* shaderSphere = nullptr;
 
-    QOpenGLVertexArrayObject* vaoMesh   = nullptr;
-    QOpenGLBuffer * vboMesh = nullptr;
-    QOpenGLBuffer * iboMesh = nullptr;
     QOpenGLBuffer * normMesh = nullptr;
+
+    Cloth *cloth = nullptr;
 
     Sphere *sphere = nullptr;
 

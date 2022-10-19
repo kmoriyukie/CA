@@ -102,7 +102,7 @@ void SceneFountain::paint(const Camera& camera) {
     const QVector3D lightColor[numLights] = {QVector3D(1,1,1)};
     QVector3D lightPosCam[numLights];
     for (int i = 0; i < numLights; i++) {
-        lightPosCam[i] = camView * lightPosWorld[i];
+        lightPosCam[i] = camView.mapVector(lightPosWorld[i]);
     }
     shader->setUniformValue("numLights", numLights);
     shader->setUniformValueArray("lightPos", lightPosCam, numLights);

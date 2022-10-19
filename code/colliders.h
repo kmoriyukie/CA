@@ -75,8 +75,8 @@ public:
     void calculatePlane();
     void collision(Particle* p, double kElastic, double kFriction) const;
 
-    virtual bool testCollision(const Particle* p) const;
-    virtual void resolveCollision(Particle* p, double kElastic, double kFriction) const;
+    virtual bool testCollision(const Particle* p) const {(void) p; return true;};
+    virtual void resolveCollision(Particle* p, double kElastic, double kFriction) const {(void) p; (void) kElastic; (void)kFriction;};
 
 protected:
     std::vector<double> vertices, normals, faces, planeD, originalVert;
@@ -92,11 +92,28 @@ public:
 
     void setSphere(const Vec3& c, double r) { center = c; radius = r;}
     void collision(Particle *p, double kElastic, double kFriction);
-    virtual bool testCollision(const Particle* p) const;
-    virtual void resolveCollision(Particle* p, double kElastic, double kFriction) const;
+    virtual bool testCollision(const Particle* p) const {(void) p; return true;};
+    virtual void resolveCollision(Particle* p, double kElastic, double kFriction) const {(void) p; (void) kElastic; (void)kFriction;};
+
 
 protected:
     Vec3 center;
     double radius;
 };
+
+class ColliderCloth : public Collider
+{
+public:
+    ColliderCloth();
+    ColliderCloth(double c, double l) : k(c), lambda(l) {}
+    virtual ~ColliderCloth() {}
+
+    virtual bool testCollision(const Particle* p) const {(void) p; return true;};
+    virtual void resolveCollision(Particle* p, double kElastic, double kFriction) const {(void) p; (void) kElastic; (void)kFriction;};
+
+protected:
+    double k;
+    double lambda;
+};
+
 #endif // COLLIDERS_H

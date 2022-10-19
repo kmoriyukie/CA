@@ -35,5 +35,13 @@ public:
     double kd = 0.99;
 };
 
+class IntegratorCloth : public Integrator{
+public:
+    virtual void step(ParticleSystem& system, double dt) {(void) system; (void) dt;};
+    void step(ParticleSystem& system, double dt, int x, int y);
+
+    double kd = 0.99;
+
+};
 
 #endif // INTEGRATORS_H
