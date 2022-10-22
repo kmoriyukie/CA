@@ -6,16 +6,28 @@
 class Constraints
 {
 public:
-    Constraints(int k_ = 0) : k(k_) {};
+    Constraints(double k_ = 0) : k(k_) {};
+
+    void distanceConstraints(Particle *&xi, Particle *&xj);
+
 protected:
-    int k;
+    double k;
 };
 
 class ConstraintsCloth: public Constraints
 {
-    ConstraintsCloth(int k_ = 0) {k = k_;};
+public:
+    ConstraintsCloth(double k_ = 0) {k = k_;};
+    ConstraintsCloth(double k_, ParticleSystem system,int x, int y);
 
-    void update(ParticleSystem &system, int x, int y);
+    void UpdateMesh(ParticleSystem system, int x =0, int y = 0);
+    void preCalc(ParticleSystem system, int x =0, int y = 0);
+
+    void step(ParticleSystem &system, int x, int y);
+    void bendingConstraints(ParticleSystem &system,int x, int y);
+protected:
+    std::vector<Eigen::Matrix<double, 4, 4>> Q;
+//    std::vector<Eigen::Vector4d> dC;
 };
 
 #endif // CONSTRAINTS_H

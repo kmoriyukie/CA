@@ -14,9 +14,9 @@ public:
     explicit WidgetCloth(QWidget *parent = nullptr);
     ~WidgetCloth();
 
-    double getGravity()    const;
-    bool withDrag() const;
-    double getDragConst() const;
+    int getNumParticlesX();
+    int getNumParticlesY();
+
 
 signals:
     void updatedParameters();

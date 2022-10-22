@@ -39,6 +39,7 @@ public:
 class Sphere : public myObject{
 public:
     Sphere(QOpenGLShaderProgram *sh);
+
     virtual ~Sphere (){delete vao;};
     virtual void draw(QOpenGLFunctions_3_3_Core* &glFuncs, Vec3 size);
     void draw(QOpenGLFunctions_3_3_Core* &glFuncs, Vec3 size, Vec3 pos, Vec3 color);

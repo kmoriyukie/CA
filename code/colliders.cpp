@@ -2,6 +2,9 @@
 #include <cmath>
 #include <iostream>
 #include <algorithm>
+
+#include "auxfunctions.h"
+
 /*
  * Plane
  */
@@ -70,9 +73,7 @@ bool intersect(double a, double b, double c, double d, double x, double y, bool 
     return i;
 }
 
-Vec3 project(Vec3 v, Vec3 norm, double dist){
-    return v - (v.dot(norm) + dist) * norm;
-}
+
 
 void ColliderBB::collision(Particle* p, double kElastic, double kFriction) const
 {
@@ -133,9 +134,7 @@ void ColliderBB::collision(Particle* p, double kElastic, double kFriction) const
 }
 
 
-double distance(Vec3 A, Vec3 B){
-    return std::sqrt((A - B).dot((A-B)));
-}
+
 void ColliderSphere::collision(Particle *p, double kElastic, double kFriction){
     double lambda = 1;
     double a, b, g, lambda1, lambda2;

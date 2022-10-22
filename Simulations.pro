@@ -10,6 +10,7 @@ INCLUDEPATH += extlibs
 VPATH += code
 
 SOURCES += \
+    code/auxfunctions.cpp \
     code/camera.cpp \
     code/colliders.cpp \
     code/constraints.cpp \
@@ -33,6 +34,7 @@ SOURCES += \
     code/widgetprojectiles.cpp
 
 HEADERS += \
+    code/auxfunctions.h \
     code/camera.h \
     code/colliders.h \
     code/constraints.h \

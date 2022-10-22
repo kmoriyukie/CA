@@ -16,14 +16,11 @@ WidgetCloth::~WidgetCloth()
     delete ui;
 }
 
-double WidgetCloth::getGravity() const {
-    return ui->gravity->value();
+int WidgetCloth::getNumParticlesX(){
+    return ui->spinBox_npX->value();
 }
 
-bool WidgetCloth::withDrag() const{
-    return ui->drag->isChecked();
-}
 
-double WidgetCloth::getDragConst() const{
-    return ui->DragConst->value();
+int WidgetCloth::getNumParticlesY(){
+    return ui->spinBox_npY->value();
 }

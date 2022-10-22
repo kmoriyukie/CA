@@ -17,51 +17,35 @@
    <item row="0" column="0">
     <widget class="QLabel" name="label">
      <property name="text">
-      <string>Gravity</string>
+      <string>NumParticlesX</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QDoubleSpinBox" name="gravity">
-     <property name="maximum">
-      <double>100.000000000000000</double>
-     </property>
-     <property name="singleStep">
-      <double>0.100000000000000</double>
-     </property>
-     <property name="value">
-      <double>9.810000000000000</double>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QCheckBox" name="drag">
-     <property name="text">
-      <string>Drag Force?</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0" colspan="2">
+   <item row="2" column="0" colspan="2">
     <widget class="QPushButton" name="btnUpdate">
      <property name="text">
       <string>Update</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="text">
-      <string>Drag Constant</string>
+   <item row="1" column="1">
+    <widget class="QSpinBox" name="spinBox_npY">
+     <property name="value">
+      <number>10</number>
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
-    <widget class="QDoubleSpinBox" name="DragConst">
-     <property name="decimals">
-      <number>4</number>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>NumParticlesY</string>
      </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QSpinBox" name="spinBox_npX">
      <property name="value">
-      <double>0.001000000000000</double>
+      <number>10</number>
      </property>
     </widget>
    </item>

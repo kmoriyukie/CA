@@ -11,6 +11,7 @@
 #include "integrators.h"
 #include "colliders.h"
 #include "myobject.h"
+#include "constraints.h"
 
 class SceneCloth : public Scene
 {
@@ -56,7 +57,10 @@ protected:
     Cloth *cloth = nullptr;
 
     Sphere *sphere = nullptr;
+    Cube *cube = nullptr;
+    ColliderBB collider;
 
+    int sizeBB = 20;
 
     unsigned int numFacesSphereS = 0;
     int numMeshIndices = 0;
@@ -71,6 +75,7 @@ protected:
     ForceConstAcceleration* fGravity;
     ForceDrag *fDrag;
     ColliderPlane colliderFloor;
+    ConstraintsCloth* constraints = nullptr;
 
     double kBounce, kFriction;
     double emitRate;
@@ -78,7 +83,7 @@ protected:
 
     bool withDrag;
 
-    Vec3 fountainPos;
+    Vec3 fountainPos = Vec3(0,0,0);
     int mouseX, mouseY;
 };
 
