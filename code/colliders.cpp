@@ -139,8 +139,8 @@ void ColliderSphere::collision(Particle *p, double kElastic, double kFriction){
     double lambda = 1;
     double a, b, g, lambda1, lambda2;
     // Check distances
-    if( distance(p->pos, center) < radius) return;
-    if( (distance(p->pos, center) >= radius) && (distance(p->prevPos, center) >= radius)) return;
+    if( (p->pos - center).norm() < radius) return;
+    if( ((p->pos - center).norm() >= radius) && ((p->prevPos - center).norm() >= radius)) return;
 
     // Calculate segment
     a = p->vel.dot(p->vel);

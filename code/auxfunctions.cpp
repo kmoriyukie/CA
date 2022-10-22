@@ -21,3 +21,7 @@ double sum(Vecd A){
     }
     return aux;
 }
+
+double cot(Vec3 A, Vec3 B){
+    return A.dot(B) / (A.cross(B)).norm();
+}

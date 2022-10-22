@@ -70,6 +70,8 @@ void SceneCloth::reset()
 //    system.deleteParticles();
 //    fDrag->clearInfluencedParticles();
     createParticles();
+
+    constraints->UpdateMesh(system, numParticlesX, numParticlesY);
 }
 
 
@@ -92,10 +94,8 @@ void SceneCloth::updateSimParams()
     maxParticleLife = 10.0;
     emitRate = 100;
 
-//    reset();
-//    system.deleteParticles();
-//    createParticles();
     cloth->updateIndices(numParticlesX, numParticlesY);
+    constraints->UpdateMesh(system, numParticlesX, numParticlesY);
 
 }
 
@@ -187,6 +187,7 @@ void SceneCloth::mouseMoved(const QMouseEvent* e, const Camera& cam)
     if (e->modifiers() & Qt::ControlModifier) {
         // move fountain
         fountainPos += disp;
+
     }
     else if(e->modifiers() & Qt::AltModifier){
         sizeBB += disp.y();

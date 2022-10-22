@@ -8,5 +8,5 @@ double distance(Vec3 A, Vec3 B);
 Vec3 abs(Vec3 A);
 
 double sum(Vecd A);
-
+double cot(Vec3 A, Vec3 B);
 #endif // AUXFUNCTIONS_H

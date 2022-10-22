@@ -22,32 +22,31 @@ void ConstraintsCloth::preCalc(ParticleSystem system,int x, int y){
 
     for(int i = 2; i < x-2; i++){
         for (int j = 2; j < y-2; j++){
-            x0 = system.getParticle((i + 2)*y + j + 0)->pos;
-            x1 = system.getParticle((i + 0)*y + j - 2)->pos;
-            x2 = system.getParticle((i - 2)*y + j + 0)->pos;
+            x0 = system.getParticle((i - 2)*y + j + 0)->pos;
+            x1 = system.getParticle((i + 2)*y + j + 0)->pos;
+            x2 = system.getParticle((i + 0)*y + j - 2)->pos;
             x3 = system.getParticle((i + 0)*y + j + 2)->pos;
 
             e0 = x1 - x0;
             e1 = x2 - x1;
             e2 = x0 - x2;
             e3 = x3 - x0;
-            e4 = x3 - x1;
+            e4 = x1 - x3;
 
-            c01 = 1/tan(acos(e0.dot(e1)/(e1.norm() * e0.norm())));
-            c02 = 1/tan(acos(e0.dot(e2)/(e2.norm() * e0.norm())));
-            c03 = 1/tan(acos(e0.dot(e3)/(e3.norm() * e0.norm())));
-            c04 = 1/tan(acos(e0.dot(e4)/(e4.norm() * e0.norm())));
+            c01 = cot(e0, -1 * e1);
+            c02 = cot(e0, -1 * e2);
+            c03 = cot(e0, e3);
+            c04 = cot(e0, e4);
 
             K[0] =   c01 + c04;
             K[1] =   c02 + c03;
             K[2] = - c01 - c02;
             K[3] = - c03 - c04;
 
-            x20 = x2 - x0;
-            A0 = 0.5 * x20.norm() * ((x1 - x0) - (x1 - x0).dot(x20/x20.norm()) * x20/x20.norm()).norm();
-            A1 = 0.5 * x20.norm() * ((x3 - x0) - (x3 - x0).dot(x20/x20.norm()) * x20/x20.norm()).norm();
+            A0 = 0.5 * (e0.cross(e1)).norm();
+            A1 = 0.5 * (e0.cross(e3)).norm();
 
-            Q.push_back(1/(A1 + A0) * K * K.transpose());
+            Q.push_back((3.0/(A1 + A0)) * K * K.transpose());
         }
     }
 }
@@ -60,7 +59,7 @@ void ConstraintsCloth::step(ParticleSystem &system, int x, int y){
     Particle* xi, *xj;
     std::vector<Vec3> C;
     //CHECK CONSTRAINTS FOR ALL PARTICLES CONNECTED TO CENTER PARTICLE!!
-
+    bendingConstraints(system, x, y);
     for(int i = 0; i < x ; i++){
         for(int j = 0; j <  y ; j++){
             xi = system.getParticle((i + 0) * y + (j + 0));
@@ -84,7 +83,8 @@ void ConstraintsCloth::step(ParticleSystem &system, int x, int y){
             }
         }
     }
-//    bendingConstraints(system, x, y);
+
+
 }
 
 
@@ -108,60 +108,45 @@ void Constraints::distanceConstraints(Particle *&xi, Particle *&xj){
 
 void ConstraintsCloth::bendingConstraints(ParticleSystem &system,int x, int y)
 {
-    int idx[4];
-    Vec3 x0, x1, x2, x3;
+    Vec3 x_[4];
     Particle *p[4];
-    Eigen::Vector4d X[4];
-    Eigen::Matrix<double, 4, 4> lambda, C;
-
-    Eigen::Matrix<double, 4, 4> a {{0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}, {0, 0, 0, 0}};
-    Eigen::Vector4d b (0,0,0,0), aux;
-    Eigen::Vector4d dC[4];
+    double C, lambda;
+    Eigen::Vector4d aux;
+    Vec3 sum;
+    Vec3 dC[4];
+//    preCalc(system, x, y);
     for(int s =2; s < x-2; s++){
         for (int t = 2; t < y-2; t++){
-            idx[0] = (s + 2)*y + t + 0;
-            idx[1] = (s + 0)*y + t - 2;
-            idx[2] = (s - 2)*y + t + 0;
-            idx[3] = (s + 0)*y + t + 2;
+            p[0] = system.getParticle((s - 2)*y + t - 0);
+            p[1] = system.getParticle((s + 2)*y + t + 0);
+            p[2] = system.getParticle((s - 0)*y + t - 2);
+            p[3] = system.getParticle((s + 0)*y + t + 2);
 
-            p[0] = system.getParticle(idx[0]);
-            p[1] = system.getParticle(idx[1]);
-            p[2] = system.getParticle(idx[2]);
-            p[3] = system.getParticle(idx[3]);
+            x_[0] = p[0]->pos;
+            x_[1] = p[1]->pos;
+            x_[2] = p[2]->pos;
+            x_[3] = p[3]->pos;
 
-            x0 = p[0]->pos;
-            x1 = p[1]->pos;
-            x2 = p[2]->pos;
-            x3 = p[3]->pos;
-
-            X[0] = Eigen::Vector4d(x0.x(), x0.y(), x0.z(), 1);
-            X[1] = Eigen::Vector4d(x1.x(), x1.y(), x1.z(), 1);
-            X[2] = Eigen::Vector4d(x2.x(), x2.y(), x2.z(), 1);
-            X[3] = Eigen::Vector4d(x3.x(), x3.y(), x3.z(), 1);
-
-            C = a;
-            dC[0] = b;
-            dC[1] = b;
-            dC[2] = b;
-            dC[3] = b;
-
-            double denom = 0;
+            C = 0;
             for(int i = 0; i < 4; i++){
+                sum = {0,0,0};
                 for(int j = 0; j < 4; j++){
-                    C += Q[i*y + j] * X[i] * X[j].transpose();
-                    dC[i] += Q[i*y + j] * X[j];
+                    C   += Q[s*(y-2) + t](i,j) * (x_[i].dot(x_[j]));
+                    sum += Q[s*(y-2) + t](i,j) * x_[j];
                 }
+                dC[i] = sum;
             }
-
+            if(C < 1e-12) continue;
+            double denom = 0;
             for(int i = 0; i < 4; i++){
                 denom += (1./p[i]->mass) * (dC[i]).norm() * (dC[i]).norm();
             }
 
-            lambda = C / denom;
+            lambda =   -0.5*C / denom;
 
             for(int i = 0; i < 4; i++){
-                aux = - lambda * (1/p[i]->mass) * dC[i];
-                p[i]->pos += Vec3(aux.x(), aux.y(), aux.z());
+                p[i]->pos +=  k * lambda * (1.0/p[i]->mass) * dC[i];
+                p[i]->color = Vec3(1.0, 0, 0);
             }
 
         }
