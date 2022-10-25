@@ -47,7 +47,7 @@ void SceneCloth::initialize() {
     system.addForce(fDrag);
     createParticles();
 
-    constraints = new ConstraintsCloth(0.5, system, numParticlesX, numParticlesY);
+    constraints = new ConstraintsCloth(0.1, system, numParticlesX, numParticlesY);
     numParticles = numParticlesX * numParticlesY;
     numMeshIndices = (numParticlesX - 1) * (numParticlesY - 1) * 2 * 3;
 
@@ -187,6 +187,7 @@ void SceneCloth::mouseMoved(const QMouseEvent* e, const Camera& cam)
     if (e->modifiers() & Qt::ControlModifier) {
         // move fountain
         fountainPos += disp;
+        createParticles();
 
     }
     else if(e->modifiers() & Qt::AltModifier){
@@ -198,6 +199,7 @@ void SceneCloth::mouseMoved(const QMouseEvent* e, const Camera& cam)
     else {
         // do something else: e.g. move colliders
     }
+    cloth->updatePositions(system);
 }
 
 void SceneCloth::createParticles(){

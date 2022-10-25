@@ -1,12 +1,12 @@
-#ifndef CONSTRAINTS_H
-#define CONSTRAINTS_H
+#ifndef CONSTRAINTSPBD_H
+#define CONSTRAINTSPBD_H
 #include "particlesystem.h"
 
 
-class Constraints
+class ConstraintsPBD
 {
 public:
-    Constraints(double k_ = 0) : k(k_) {};
+    ConstraintsPBD(double k_ = 0) : k(k_) {};
 
     void distanceConstraints(Particle *&xi, Particle *&xj);
 
@@ -14,11 +14,11 @@ protected:
     double k;
 };
 
-class ConstraintsCloth: public Constraints
+class ConstraintsClothPBD: public ConstraintsPBD
 {
 public:
-    ConstraintsCloth(double k_ = 0) {k = k_;};
-    ConstraintsCloth(double k_, ParticleSystem system,int x, int y);
+    ConstraintsClothPBD(double k_ = 0) {k = k_;};
+    ConstraintsClothPBD(double k_, ParticleSystem system,int x, int y);
 
     void UpdateMesh(ParticleSystem system, int x =0, int y = 0);
     void preCalc(ParticleSystem system, int x =0, int y = 0);
@@ -29,4 +29,4 @@ protected:
     std::vector<Eigen::Matrix<double, 4, 4>> Q;
 };
 
-#endif // CONSTRAINTS_H
+#endif // CONSTRAINTSPBD_H

@@ -1,18 +1,18 @@
-#include "constraints.h"
+#include "constraintsPBD.h"
 #include "defines.h"
 #include "auxfunctions.h"
 
-ConstraintsCloth::ConstraintsCloth(double k_, ParticleSystem system,int x, int y){
+ConstraintsClothPBD::ConstraintsClothPBD(double k_, ParticleSystem system,int x, int y){
     k = k_;
     preCalc(system, x, y);
 }
 
 
-void ConstraintsCloth::UpdateMesh(ParticleSystem system, int x, int y){
+void ConstraintsClothPBD::UpdateMesh(ParticleSystem system, int x, int y){
     preCalc(system, x, y);
 }
 
-void ConstraintsCloth::preCalc(ParticleSystem system,int x, int y){
+void ConstraintsClothPBD::preCalc(ParticleSystem system,int x, int y){
     Vec3 x0, x1, x2, x3;
     Eigen::Vector4d K;
     double c01, c02, c03, c04;
@@ -52,14 +52,14 @@ void ConstraintsCloth::preCalc(ParticleSystem system,int x, int y){
 }
 
 
-void ConstraintsCloth::step(ParticleSystem &system, int x, int y){
+void ConstraintsClothPBD::step(ParticleSystem &system, int x, int y){
     Vecd p = system.getPositions();
 
     Vecd aux;
     Particle* xi, *xj;
     std::vector<Vec3> C;
     //CHECK CONSTRAINTS FOR ALL PARTICLES CONNECTED TO CENTER PARTICLE!!
-    bendingConstraints(system, x, y);
+//    bendingConstraints(system, x, y);
     for(int i = 0; i < x ; i++){
         for(int j = 0; j <  y ; j++){
             xi = system.getParticle((i + 0) * y + (j + 0));
@@ -88,7 +88,7 @@ void ConstraintsCloth::step(ParticleSystem &system, int x, int y){
 }
 
 
-void Constraints::distanceConstraints(Particle *&xi, Particle *&xj){
+void ConstraintsPBD::distanceConstraints(Particle *&xi, Particle *&xj){
     Vec3 gC;
     double l = (xi->pos - xj->pos).norm();
     gC =  (xj->pos - xi->pos)*1.0/l;
@@ -106,7 +106,7 @@ void Constraints::distanceConstraints(Particle *&xi, Particle *&xj){
 
 
 
-void ConstraintsCloth::bendingConstraints(ParticleSystem &system,int x, int y)
+void ConstraintsClothPBD::bendingConstraints(ParticleSystem &system,int x, int y)
 {
     Vec3 x_[4];
     Particle *p[4];

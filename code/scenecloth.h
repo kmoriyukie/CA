@@ -11,7 +11,7 @@
 #include "integrators.h"
 #include "colliders.h"
 #include "myobject.h"
-#include "constraints.h"
+#include "constraintsPBD.h"
 
 class SceneCloth : public Scene
 {

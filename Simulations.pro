@@ -13,7 +13,7 @@ SOURCES += \
     code/auxfunctions.cpp \
     code/camera.cpp \
     code/colliders.cpp \
-    code/constraints.cpp \
+    code/constraintsPBD.cpp \
     code/forces.cpp \
     code/glutils.cpp \
     code/glwidget.cpp \
@@ -37,7 +37,7 @@ HEADERS += \
     code/auxfunctions.h \
     code/camera.h \
     code/colliders.h \
-    code/constraints.h \
+    code/constraintsPBD.h \
     code/defines.h \
     code/forces.h \
     code/glutils.h \
