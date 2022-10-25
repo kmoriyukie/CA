@@ -75,7 +75,7 @@ protected:
     ForceConstAcceleration* fGravity;
     ForceDrag *fDrag;
     ColliderPlane colliderFloor;
-    ConstraintsCloth* constraints = nullptr;
+    ConstraintsClothPBD* constraints = nullptr;
 
     double kBounce, kFriction;
     double emitRate;

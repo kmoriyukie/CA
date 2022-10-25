@@ -47,7 +47,7 @@ void SceneCloth::initialize() {
     system.addForce(fDrag);
     createParticles();
 
-    constraints = new ConstraintsCloth(0.1, system, numParticlesX, numParticlesY);
+    constraints = new ConstraintsClothPBD(0.1, system, numParticlesX, numParticlesY);
     numParticles = numParticlesX * numParticlesY;
     numMeshIndices = (numParticlesX - 1) * (numParticlesY - 1) * 2 * 3;
 
