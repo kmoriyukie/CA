@@ -4,6 +4,7 @@
 #include "scenefountain.h"
 #include "scenesphere.h"
 #include "scenebb.h"
+#include "sceneclothPBD.h"
 #include "scenecloth.h"
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -27,7 +28,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionSceneFountain,   &QAction::triggered, this, [=](void){ changeScene(new SceneFountain()); });
     connect(ui->actionBounding_Box,   &QAction::triggered, this, [=](void){ changeScene(new SceneBoundingBox()); });
     connect(ui->actionSphere,   &QAction::triggered, this, [=](void){ changeScene(new SceneSphere()); });
-    connect(ui->actionCloth,   &QAction::triggered, this, [=](void){ changeScene(new SceneCloth()); });
+    connect(ui->actionCloth_with_PBD,   &QAction::triggered, this, [=](void){ changeScene(new SceneClothPBD()); });
+
+    connect(ui->actionCloth_with_Springs,   &QAction::triggered, this, [=](void){ changeScene(new SceneCloth()); });
 
 }
 

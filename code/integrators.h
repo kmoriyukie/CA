@@ -39,7 +39,7 @@ class IntegratorCloth : public Integrator{
 public:
     virtual void step(ParticleSystem& system, double dt) {(void) system; (void) dt;};
     void step(ParticleSystem& system, double dt, int x, int y);
-
+    void relaxation(ParticleSystem system, int idx1, int idx2,Vecd &x1, Vecd xi, int l0);
     double kd = 0.99;
 
 };

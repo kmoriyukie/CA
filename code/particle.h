@@ -18,6 +18,8 @@ public:
     Vec3 color    = Vec3(1, 1, 1);
     unsigned int id = 0;
 
+    bool is_static = false;
+
     Particle() {
         pos	    = Vec3(0.0, 0.0, 0.0);
         vel	    = Vec3(0.0, 0.0, 0.0);

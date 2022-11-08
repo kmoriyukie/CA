@@ -64,4 +64,30 @@ protected:
     double mu;
 };
 
+class ForceSpring : public Force //Only works for sphere
+{
+public:
+    ForceSpring() : ks(0), kd(0), d0(0) {};
+    virtual ~ForceSpring() {}
+
+    void set(const double ks_, const double kd_, int x_, int y_, double d0_)
+    {
+        ks = ks_;
+        kd = kd_;
+        x = x_;
+        y = y_;
+        d0 = d0_;
+    };
+
+    virtual void apply();
+
+    Vec3 elasticForce(Particle *p1, Particle *p2);
+    Vec3 dampingForce(Particle *p1, Particle *p2);
+
+protected:
+    double ks, kd;
+    int x, y;
+    double d0;
+};
+
 #endif // FORCES_H

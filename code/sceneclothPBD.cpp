@@ -1,4 +1,4 @@
-#include "scenecloth.h"
+#include "sceneclothPBD.h"
 #include "glutils.h"
 #include "model.h"
 #include <QOpenGLFunctions_3_3_Core>
@@ -6,13 +6,13 @@
 
 
 
-SceneCloth::SceneCloth() {
+SceneClothPBD::SceneClothPBD() {
     widget = new WidgetCloth();
     connect(widget, SIGNAL(updatedParameters()), this, SLOT(updateSimParams()));
 }
 
 
-SceneCloth::~SceneCloth() {
+SceneClothPBD::~SceneClothPBD() {
     if (widget)     delete widget;
     if (shader)     delete shader;
     if(sphere)      delete sphere;
@@ -22,7 +22,7 @@ SceneCloth::~SceneCloth() {
 }
 
 
-void SceneCloth::initialize() {
+void SceneClothPBD::initialize() {
     // load shader
     shaderSphere = glutils::loadShaderProgram(":/shaders/phong.vert", ":/shaders/phong.frag");
     shader = glutils::loadShaderProgram(":/shaders/cloth.vert", ":/shaders/cloth.geom", ":/shaders/cloth.frag");
@@ -34,6 +34,7 @@ void SceneCloth::initialize() {
     numParticlesX = widget->getNumParticlesX();
     numParticlesY = widget->getNumParticlesY();
 
+//    numParticlesY = 10;
 
     cloth = new Cloth(shader, numParticlesX, numParticlesY);
     glutils::checkGLError();
@@ -41,9 +42,6 @@ void SceneCloth::initialize() {
 
     fGravity = new ForceConstAcceleration();
     system.addForce(fGravity);
-
-    fSpring = new ForceSpring();
-    system.addForce(fSpring);
 
     fDrag = new ForceDrag();
     system.addForce(fDrag);
@@ -53,12 +51,13 @@ void SceneCloth::initialize() {
     numParticles = numParticlesX * numParticlesY;
     numMeshIndices = (numParticlesX - 1) * (numParticlesY - 1) * 2 * 3;
 
+
     updateSimParams();
-    collider.setBB(sizeBB, Vec3(0, sizeBB.y(), 0));
+    collider.setBB(Vec3(sizeBB, sizeBB, sizeBB), Vec3(0, sizeBB, 0));
 }
 
 
-void SceneCloth::reset()
+void SceneClothPBD::reset()
 {
     // update values from UI
     updateSimParams();
@@ -68,26 +67,26 @@ void SceneCloth::reset()
 
     // erase all particles
     fGravity->clearInfluencedParticles();
-    fSpring->clearInfluencedParticles();
+//    system.deleteParticles();
+//    fDrag->clearInfluencedParticles();
     createParticles();
 
     constraints->UpdateMesh(system, numParticlesX, numParticlesY);
 }
 
 
-void SceneCloth::updateSimParams()
+void SceneClothPBD::updateSimParams()
 {
     // get gravity from UI and update force
 //    double g = widget->getGravity();
     numParticlesX = widget->getNumParticlesX();
     numParticlesY = widget->getNumParticlesY();
     numParticles = numParticlesX * numParticlesY;
-    if (system.getNumParticles() != (unsigned int)(numParticles))
+    if (system.getNumParticles() != numParticles)
             createParticles();
 
     fGravity->setAcceleration(Vec3(0, -9, 0));
     fDrag->setDragConstant(0.001);
-    fSpring->set(0.1, 0.1 , numParticlesX, numParticlesY, 1);
 
     // get other relevant UI values and update simulation params
     kBounce = 0.5;
@@ -101,7 +100,7 @@ void SceneCloth::updateSimParams()
 }
 
 
-void SceneCloth::paint(const Camera& camera) {
+void SceneClothPBD::paint(const Camera& camera) {
 
     QOpenGLFunctions_3_3_Core* glFuncs = nullptr;
 
@@ -138,7 +137,7 @@ void SceneCloth::paint(const Camera& camera) {
     shaderSphere->setUniformValue("numLights", numLights);
     shaderSphere->setUniformValueArray("lightPos", lightPosCam, numLights);
     shaderSphere->setUniformValueArray("lightColor", lightColor, numLights);
-    cube->draw(glFuncs, sizeBB);
+    cube->draw(glFuncs, Vec3(sizeBB,sizeBB,sizeBB));
     for (const Particle* particle : system.getParticles()) {
         Vec3   p = particle->pos;
         Vec3   c = particle->color;
@@ -150,19 +149,16 @@ void SceneCloth::paint(const Camera& camera) {
 }
 
 
-void SceneCloth::update(double dt) {
+void SceneClothPBD::update(double dt) {
     if (system.getNumParticles() != numParticles)
             createParticles();
 
 
     // integration step
     Vecd ppos = system.getPositions();
-    integrator.step(system, dt, numParticlesX, numParticlesY);
+    integrator.step(system, dt);
     system.setPreviousPositions(ppos);
-
-
-
-//    constraints->step(system, numParticlesX, numParticlesY);
+    constraints->step(system, numParticlesX, numParticlesY);
 
     // collisions
     for (Particle* p : system.getParticles()) {
@@ -172,13 +168,13 @@ void SceneCloth::update(double dt) {
 
 }
 
-void SceneCloth::mousePressed(const QMouseEvent* e, const Camera&)
+void SceneClothPBD::mousePressed(const QMouseEvent* e, const Camera&)
 {
     mouseX = e->pos().x();
     mouseY = e->pos().y();
 }
 
-void SceneCloth::mouseMoved(const QMouseEvent* e, const Camera& cam)
+void SceneClothPBD::mouseMoved(const QMouseEvent* e, const Camera& cam)
 {
     int dx = e->pos().x() - mouseX;
     int dy = e->pos().y() - mouseY;
@@ -195,15 +191,10 @@ void SceneCloth::mouseMoved(const QMouseEvent* e, const Camera& cam)
 
     }
     else if(e->modifiers() & Qt::AltModifier){
-        sizeBB += disp;
+        sizeBB += disp.y();
 
-
-        collider.setBB(sizeBB, Vec3(0, sizeBB.y(), 0));
+        collider.setBB(Vec3(sizeBB, sizeBB, sizeBB), Vec3(0, sizeBB, 0));
         // do something else: e.g. move colliders
-    }
-    else if(e->modifiers() & Qt::Modifier::SHIFT){
-//        Particle *p = cloth->getClosestParticle(system, camera, Vec3(mouseX, mouseY, 0));
-//        p->pos += disp;
     }
     else {
         // do something else: e.g. move colliders
@@ -211,33 +202,22 @@ void SceneCloth::mouseMoved(const QMouseEvent* e, const Camera& cam)
     cloth->updatePositions(system);
 }
 
-void SceneCloth::createParticles(){
+void SceneClothPBD::createParticles(){
     system.deleteParticles();
-
-    fGravity->clearInfluencedParticles();
-    fSpring->clearInfluencedParticles();
     for (int i = 0; i < numParticlesX ; i++){
         for (int j = 0; j < numParticlesY; j++){
             Particle *p = new Particle();
 
             float x = 1*i;
             float z = 1*j;
-            float y = 25.0;
+            float y = 10.0;
 
             p->pos = Vec3(x, y, z) + fountainPos;//.Vec3(fountainPos.x(), 10,fountainPos.z());
             p->vel = Vec3(0, 0, 0);
-            p->id = i * numParticlesY + j;
-
             p->radius = 0.1;
+            p->is_static = false;
             system.addParticle(p);
-
-//            if(j == numParticlesX - 1 && (i==0 || i ==numParticlesY -1)){
-//                p->is_static = true;
-//            }
-//            else p->is_static = false;
-
             fGravity->addInfluencedParticle(p);
-            fSpring->addInfluencedParticle(p);
         }
     }
 

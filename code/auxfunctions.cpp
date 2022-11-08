@@ -1,7 +1,12 @@
 #include "auxfunctions.h"
 
 Vec3 project(Vec3 v, Vec3 norm, double dist){
-    return v - (v.dot(norm) + dist) * norm;
+    return v - (norm.dot(v) + dist) * norm;
+}
+
+
+Vec3 project(Vec3 v, Vec3 norm, Vec3 A){
+    return v - (norm.dot(v - A)) * norm;
 }
 
 double distance(Vec3 A, Vec3 B){

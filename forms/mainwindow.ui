@@ -144,11 +144,20 @@
     <property name="title">
      <string>Scene</string>
     </property>
+    <widget class="QMenu" name="menuCloth">
+     <property name="title">
+      <string>Cloth</string>
+     </property>
+     <addaction name="separator"/>
+     <addaction name="separator"/>
+     <addaction name="actionCloth_with_PBD"/>
+     <addaction name="actionCloth_with_Springs"/>
+    </widget>
     <addaction name="actionSceneProjectiles"/>
     <addaction name="actionSceneFountain"/>
     <addaction name="actionBounding_Box"/>
     <addaction name="actionSphere"/>
-    <addaction name="actionCloth"/>
+    <addaction name="menuCloth"/>
    </widget>
    <widget class="QMenu" name="menuCamera">
     <property name="title">
@@ -203,9 +212,14 @@
     <string>Sphere</string>
    </property>
   </action>
-  <action name="actionCloth">
+  <action name="actionCloth_with_PBD">
    <property name="text">
-    <string>Cloth</string>
+    <string>Cloth with PBD</string>
+   </property>
+  </action>
+  <action name="actionCloth_with_Springs">
+   <property name="text">
+    <string>Cloth with Springs</string>
    </property>
   </action>
  </widget>

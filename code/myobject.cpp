@@ -1,7 +1,7 @@
 #include "myobject.h"
 #include "model.h"
 #include "glutils.h"
-
+#include "auxfunctions.h"
 
 Cube::Cube(QOpenGLShaderProgram *sh){
     this->shader = sh;
@@ -166,4 +166,17 @@ void Cloth::draw(QOpenGLFunctions_3_3_Core* &glFuncs, Vec3 size){
     glFuncs->glDrawElements(GL_TRIANGLES, numMeshIndices, GL_UNSIGNED_INT, nullptr);
     vao->release();
     glutils::checkGLError();
+}
+
+Particle * Cloth::getClosestParticle(ParticleSystem system, Vec3 pos){
+    Particle *p2 = nullptr;
+    double d = 1000000;
+
+    for(Particle *p : system.getParticles()){
+        if(d > distance(Vec3(p->pos.x(), 0, p->pos.y()), pos)) {
+            d = distance(Vec3(p->pos.x(), 0, p->pos.y()), pos);
+            p2 = p;
+        }
+    }
+    return p2;
 }

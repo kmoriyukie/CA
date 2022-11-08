@@ -55,6 +55,8 @@ public:
 
     void updateIndices(int x, int y);
     void updatePositions(ParticleSystem &system);
+
+    Particle * getClosestParticle(ParticleSystem system, Vec3 pos);
 protected:
 
     QOpenGLBuffer * vbo = nullptr;

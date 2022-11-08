@@ -25,6 +25,7 @@ SOURCES += \
     code/particlesystem.cpp \
     code/scenebb.cpp \
     code/scenecloth.cpp \
+    code/sceneclothPBD.cpp \
     code/scenefountain.cpp \
     code/sceneprojectiles.cpp \
     code/scenesphere.cpp \
@@ -51,6 +52,7 @@ HEADERS += \
     code/scene.h \
     code/scenebb.h \
     code/scenecloth.h \
+    code/sceneclothPBD.h \
     code/scenefountain.h \
     code/sceneprojectiles.h \
     code/scenesphere.h \

@@ -3,6 +3,7 @@
 Vecd ParticleSystem::getState() const {
     Vecd state(this->getStateSize());
     for (unsigned int i = 0; i < particles.size(); i++) {
+
         state[Particle::PhaseDimension*i    ] = particles[i]->pos[0];
         state[Particle::PhaseDimension*i + 1] = particles[i]->pos[1];
         state[Particle::PhaseDimension*i + 2] = particles[i]->pos[2];
@@ -41,12 +42,15 @@ Vecd ParticleSystem::getSecondDerivative() const {
 
 void ParticleSystem::setState(const Vecd& state, bool applyForces) {
     for (unsigned int i = 0; i < particles.size(); i++) {
+//        if(particles[i]->id != 0){
+        if(particles[i]->is_static) continue;
         particles[i]->pos[0]  = state[Particle::PhaseDimension*i    ];
         particles[i]->pos[1]  = state[Particle::PhaseDimension*i + 1];
         particles[i]->pos[2]  = state[Particle::PhaseDimension*i + 2];
         particles[i]->vel[0]  = state[Particle::PhaseDimension*i + 3];
         particles[i]->vel[1]  = state[Particle::PhaseDimension*i + 4];
         particles[i]->vel[2]  = state[Particle::PhaseDimension*i + 5];
+//        }
     }
     if (applyForces) {
         updateForces();
@@ -67,10 +71,11 @@ void ParticleSystem::updateForces() {
 Vecd ParticleSystem::getPositions() const {
     Vecd res(3*this->getNumParticles());
     for (unsigned int i = 0; i < particles.size(); i++) {
+//        if(particles[i]->id != 0){
         res[3*i  ] = particles[i]->pos[0];
         res[3*i+1] = particles[i]->pos[1];
-        res[3*i+2] = particles[i]->pos[2];
-    }
+        res[3*i+2] = particles[i]->pos[2];}
+//    }
     return res;
 }
 
@@ -106,6 +111,7 @@ Vecd ParticleSystem::getPreviousPositions() const {
 
 void ParticleSystem::setPositions(const Vecd& pos) {
     for (unsigned int i = 0; i < particles.size(); i++) {
+        if(particles[i]->is_static) continue;
         particles[i]->pos[0] = pos[3*i    ];
         particles[i]->pos[1] = pos[3*i + 1];
         particles[i]->pos[2] = pos[3*i + 2];
@@ -114,6 +120,7 @@ void ParticleSystem::setPositions(const Vecd& pos) {
 
 void ParticleSystem::setVelocities(const Vecd& vel) {
     for (unsigned int i = 0; i < particles.size(); i++) {
+        if(particles[i]->is_static) continue;
         particles[i]->vel[0] = vel[3*i    ];
         particles[i]->vel[1] = vel[3*i + 1];
         particles[i]->vel[2] = vel[3*i + 2];

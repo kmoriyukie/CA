@@ -1,5 +1,5 @@
-#ifndef SceneCloth_H
-#define SceneCloth_H
+#ifndef SceneClothPBD_H
+#define SceneClothPBD_H
 
 #include <QOpenGLShaderProgram>
 #include <QOpenGLVertexArrayObject>
@@ -13,18 +13,18 @@
 #include "myobject.h"
 #include "constraintsPBD.h"
 
-class SceneCloth : public Scene
+class SceneClothPBD : public Scene
 {
     Q_OBJECT
 
 public:
-    SceneCloth();
+    SceneClothPBD();
 
     void createParticles();
     void updateIndices();
     void updateCoordsBuffer();
 
-    virtual ~SceneCloth();
+    virtual ~SceneClothPBD();
 
     virtual void initialize();
     virtual void reset();
@@ -60,7 +60,7 @@ protected:
     Cube *cube = nullptr;
     ColliderBB collider;
 
-    Vec3 sizeBB = Vec3(6, 2, 6);
+    int sizeBB = 20;
 
     unsigned int numFacesSphereS = 0;
     int numMeshIndices = 0;
@@ -69,13 +69,11 @@ protected:
     int numParticles = 0;
 
 
-    IntegratorCloth integrator;
+    IntegratorEuler integrator;
     ParticleSystem system;
     std::list<Particle*> deadParticles;
-
     ForceConstAcceleration* fGravity;
     ForceDrag *fDrag;
-    ForceSpring *fSpring;
     ColliderPlane colliderFloor;
     ConstraintsClothPBD* constraints = nullptr;
 
@@ -89,4 +87,4 @@ protected:
     int mouseX, mouseY;
 };
 
-#endif // SceneCloth_H
+#endif // SceneClothPBD_H
