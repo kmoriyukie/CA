@@ -17,6 +17,7 @@ SceneCloth::~SceneCloth() {
     if (shader)     delete shader;
     if(sphere)      delete sphere;
     if (cloth)      delete cloth;
+    if(floor)       delete floor;
     if (fGravity)   delete fGravity;
     if(constraints) delete constraints;
 }
@@ -26,10 +27,12 @@ void SceneCloth::initialize() {
     // load shader
     shaderSphere = glutils::loadShaderProgram(":/shaders/phong.vert", ":/shaders/phong.frag");
     shader = glutils::loadShaderProgram(":/shaders/cloth.vert", ":/shaders/cloth.geom", ":/shaders/cloth.frag");
-
+    shaderSphere->bind();
     sphere = new Sphere(shaderSphere);
-    glutils::checkGLError();
+    floor = new Floor(shaderSphere);
     cube = new Cube(shaderSphere);
+    glutils::checkGLError();
+
     shader->bind();
     numParticlesX = widget->getNumParticlesX();
     numParticlesY = widget->getNumParticlesY();
@@ -55,6 +58,7 @@ void SceneCloth::initialize() {
 
     updateSimParams();
     collider.setBB(sizeBB, Vec3(0, sizeBB.y(), 0));
+    colliderFloor.setPlane(Vec3(0, 1, 0), 0);
 }
 
 
@@ -107,13 +111,10 @@ void SceneCloth::paint(const Camera& camera) {
 
     glFuncs = QOpenGLVersionFunctionsFactory::get<QOpenGLFunctions_3_3_Core>(QOpenGLContext::currentContext());
 
-    shader->bind();
-
     // camera matrices
     QMatrix4x4 camProj = camera.getPerspectiveMatrix();
     QMatrix4x4 camView = camera.getViewMatrix();
-    shader->setUniformValue("ProjMatrix", camProj);
-    shader->setUniformValue("ViewMatrix", camView);
+
 
     // lighting
     const int numLights = 1;
@@ -123,6 +124,11 @@ void SceneCloth::paint(const Camera& camera) {
     for (int i = 0; i < numLights; i++) {
         lightPosCam[i] = camView.mapVector(lightPosWorld[i]);
     }
+
+    shader->bind();
+
+    shader->setUniformValue("ProjMatrix", camProj);
+    shader->setUniformValue("ViewMatrix", camView);
     shader->setUniformValue("numLights", numLights);
     shader->setUniformValueArray("lightPos", lightPosCam, numLights);
     shader->setUniformValueArray("lightColor", lightColor, numLights);
@@ -130,15 +136,21 @@ void SceneCloth::paint(const Camera& camera) {
     cloth->updatePositions(system);
     cloth->draw(glFuncs, Vec3(0,0,0));
     glutils::checkGLError();
+
     shader->release();
 
     shaderSphere->bind();
+
     shaderSphere->setUniformValue("ProjMatrix", camProj);
     shaderSphere->setUniformValue("ViewMatrix", camView);
+
     shaderSphere->setUniformValue("numLights", numLights);
     shaderSphere->setUniformValueArray("lightPos", lightPosCam, numLights);
     shaderSphere->setUniformValueArray("lightColor", lightColor, numLights);
+    floor->draw(glFuncs, Vec3(20, 0, 20));
+
     cube->draw(glFuncs, sizeBB);
+
     for (const Particle* particle : system.getParticles()) {
         Vec3   p = particle->pos;
         Vec3   c = particle->color;
@@ -146,7 +158,9 @@ void SceneCloth::paint(const Camera& camera) {
 
         sphere->draw(glFuncs, Vec3(r, r, r), p, c);
     }
+
     shaderSphere->release();
+    glutils::checkGLError();
 }
 
 
@@ -167,6 +181,8 @@ void SceneCloth::update(double dt) {
     // collisions
     for (Particle* p : system.getParticles()) {
         collider.collision(p, 0, kFriction);
+        if(colliderFloor.testCollision(p))
+            colliderFloor.resolveCollision(p, 0.2, 0.5);
     }
 
 

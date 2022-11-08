@@ -3,7 +3,7 @@
 #include "glutils.h"
 #include "auxfunctions.h"
 
-Cube::Cube(QOpenGLShaderProgram *sh){
+Cube::Cube(QOpenGLShaderProgram *&sh){
     this->shader = sh;
 
     Model cube = Model::createCube();
@@ -24,27 +24,27 @@ void Cube::draw(QOpenGLFunctions_3_3_Core* &glFuncs, Vec3 size){
     glutils::checkGLError();
 }
 
-Floor::Floor(QOpenGLShaderProgram *sh){
+Floor::Floor(QOpenGLShaderProgram *&sh){
     this->shader = sh;
 
     Model quad = Model::createQuad();
-    vao = glutils::createVAO(shader, &quad);
+    vao = glutils::createVAO(sh, &quad);
 }
 
 
 void Floor::draw(QOpenGLFunctions_3_3_Core* &glFuncs, Vec3 size){
-    vao->bind();
     QMatrix4x4 modelMat;
+    vao->bind();
     modelMat.scale(size.x(), size.y(), size.z());
     shader->setUniformValue("ModelMatrix", modelMat);
-    shader->setUniformValue("matdiff", 0.8f, 0.8f, 0.8f);
+    shader->setUniformValue("matdiff", 1.f, 1.f, 1.f);
     shader->setUniformValue("matspec", 0.0f, 0.0f, 0.0f);
     shader->setUniformValue("matshin", 0.0f);
     glFuncs->glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     vao->release();
 }
 
-Sphere::Sphere(QOpenGLShaderProgram *sh){
+Sphere::Sphere(QOpenGLShaderProgram *&sh){
     shader = sh;
     Model sphere = Model::createIcosphere(1);
     vao = glutils::createVAO(shader, &sphere);

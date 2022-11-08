@@ -23,7 +23,7 @@ public:
 
 class Cube : public myObject{
 public:
-    Cube(QOpenGLShaderProgram *sh);
+    Cube(QOpenGLShaderProgram *&sh);
     virtual ~Cube (){delete vao;};
     virtual void draw(QOpenGLFunctions_3_3_Core* &glFuncs, Vec3 size);
 protected:
@@ -31,14 +31,14 @@ protected:
 
 class Floor : public myObject{
 public:
-    Floor(QOpenGLShaderProgram *sh);
+    Floor(QOpenGLShaderProgram *&sh);
     virtual ~Floor (){delete vao;};
     virtual void draw(QOpenGLFunctions_3_3_Core* &glFuncs, Vec3 size);
 };
 
 class Sphere : public myObject{
 public:
-    Sphere(QOpenGLShaderProgram *sh);
+    Sphere(QOpenGLShaderProgram *&sh);
 
     virtual ~Sphere (){delete vao;};
     virtual void draw(QOpenGLFunctions_3_3_Core* &glFuncs, Vec3 size);

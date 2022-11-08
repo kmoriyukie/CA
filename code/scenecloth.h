@@ -58,6 +58,7 @@ protected:
 
     Sphere *sphere = nullptr;
     Cube *cube = nullptr;
+    Floor *floor = nullptr;
     ColliderBB collider;
 
     Vec3 sizeBB = Vec3(6, 2, 6);
