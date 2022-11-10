@@ -1,7 +1,7 @@
 #include "auxfunctions.h"
 
 Vec3 project(Vec3 v, Vec3 norm, double dist){
-    return v - (norm.dot(v) + dist) * norm;
+    return v - (norm.normalized().dot(v) + dist) * norm.normalized();
 }
 
 

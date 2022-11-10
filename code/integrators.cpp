@@ -113,7 +113,7 @@ void IntegratorCloth::relaxation(ParticleSystem system, int idx1, int idx2,Vecd 
                    x1[6*idx1 + 1],
                    x1[6*idx1 + 2]);
     double d = (xj - xi).norm();
-    double epsilon = 0.5;
+    double epsilon = 1;
     int k = 0;
     while(k < 50 && (d > (1 + epsilon) * l0 || d < (1 - epsilon) * l0)){
         d = (xj - xi).norm();

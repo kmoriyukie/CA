@@ -26,11 +26,13 @@ SOURCES += \
     code/scenebb.cpp \
     code/scenecloth.cpp \
     code/sceneclothPBD.cpp \
+    code/scenefluid.cpp \
     code/scenefountain.cpp \
     code/sceneprojectiles.cpp \
     code/scenesphere.cpp \
     code/widgetboundingbox.cpp \
     code/widgetcloth.cpp \
+    code/widgetfluid.cpp \
     code/widgetfountain.cpp \
     code/widgetprojectiles.cpp
 
@@ -53,11 +55,13 @@ HEADERS += \
     code/scenebb.h \
     code/scenecloth.h \
     code/sceneclothPBD.h \
+    code/scenefluid.h \
     code/scenefountain.h \
     code/sceneprojectiles.h \
     code/scenesphere.h \
     code/widgetboundingbox.h \
     code/widgetcloth.h \
+    code/widgetfluid.h \
     code/widgetfountain.h \
     code/widgetprojectiles.h
 
@@ -65,6 +69,7 @@ FORMS += \
     forms/mainwindow.ui \
     forms/widgetBoundingBox.ui \
     forms/widgetCloth.ui \
+    forms/widgetfluid.ui \
     forms/widgetfountain.ui \
     forms/widgetprojectiles.ui \
     forms/widgetsphere.ui

@@ -79,7 +79,7 @@ void SceneBoundingBox::updateSimParams()
     double mu = widget->getDragConst();
     fDrag->setDragConstant(mu);
     // get other relevant UI values and update simulation params
-    kBounce = 0.6;
+    kBounce = 0.5;
     kFriction = 0.1;
     maxParticleLife = 10.0;
     emitRate = 100;
@@ -214,6 +214,7 @@ void SceneBoundingBox::mouseMoved(const QMouseEvent* e, const Camera& cam)
     }
     else if(e->modifiers() & Qt::AltModifier){
         sizeBB += disp.y();
+        collider.setBB(Vec3(sizeBB, sizeBB, sizeBB), Vec3(0, sizeBB, 0));
         // do something else: e.g. move colliders
     }
 }
