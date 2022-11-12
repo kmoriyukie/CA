@@ -80,9 +80,7 @@ protected:
     double emitRate;
     double maxParticleLife;
 
-    bool withDrag;
-
-    Vec3 fountainPos = Vec3(0,0,0);
+    Vec3 fountainPos = Vec3(2.5,10,-2.5);
     int mouseX, mouseY;
 };
 

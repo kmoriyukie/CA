@@ -37,8 +37,7 @@ void ColliderBB::calculatePlane(){
     for (unsigned int i = 0; i < 6; i++) { //faces
         f = faces[6*i];f2 = faces[6*i + 5];
         A = Vec3(vertices[3*f], vertices[3*f + 1], vertices[3*f + 2]);
-        B = Vec3(vertices[3*f2], vertices[3*f2 + 1], vertices[3*f2 + 2]);
-        planeD[i] = -Vec3(normals[3*i], normals[3*i + 1], normals[3*i + 2]).dot(0.5 * (A + B));
+        planeD[i] = -Vec3(normals[3*i], normals[3*i + 1], normals[3*i + 2]).dot(A);
     }
 
 }
@@ -69,6 +68,7 @@ void ColliderBB::setBB(Vec3 scale, Vec3 translation)
 void ColliderBB::collision(Particle* p, double kElastic, double kFriction) const
 {
     Vec3 norm, A, B, C, D;
+    Vec3 normProj;
     Vec3 point, point_2;
     Eigen::Vector4d f;
     double a, b, d;
@@ -84,29 +84,29 @@ void ColliderBB::collision(Particle* p, double kElastic, double kFriction) const
         b = norm.dot(p->prevPos) + d;
 
         if (a*b <= 0){ // intersects plane!!
-            point = project(p->pos, norm, d); // projected point
+            normProj = norm;
+            point = project(p->pos, normProj, d); // projected point
             x = point.x();
             y = point.y();
             z = point.z();
 
             f = {faces[6*i], faces[6*i + 1], faces[6*i + 2], faces[6*i + 5]};
             // Projected vertices
-            A = project(Vec3(vertices[3*f.x()], vertices[3*f.x() + 1], vertices[3*f.x() + 2]), norm, d);
-            B = project(Vec3(vertices[3*f.y()], vertices[3*f.y() + 1], vertices[3*f.y() + 2]), norm, d);
-            C = project(Vec3(vertices[3*f.z()], vertices[3*f.z() + 1], vertices[3*f.z() + 2]), norm, d);
-            D = project(Vec3(vertices[3*f.w()], vertices[3*f.w() + 1], vertices[3*f.w() + 2]), norm, d);
 
-            maxBounds = Vec3(std::max({A.x(), B.x(), C.x(), D.x()}),
-                             std::max({A.y(), B.y(), C.y(), D.y()}),
-                             std::max({A.z(), B.z(), C.z(), D.z()}));
+            A = project(Vec3(vertices[3*f.x()], vertices[3*f.x() + 1], vertices[3*f.x() + 2]), normProj, d);
+            D = project(Vec3(vertices[3*f.w()], vertices[3*f.w() + 1], vertices[3*f.w() + 2]), normProj, d);
 
-            minBounds = Vec3(std::min({A.x(), B.x(), C.x(), D.x()}),
-                             std::min({A.y(), B.y(), C.y(), D.y()}),
-                             std::min({A.z(), B.z(), C.z(), D.z()}));
+            maxBounds = Vec3(std::max({A.x(), D.x()}),
+                             std::max({A.y(), D.y()}),
+                             std::max({A.z(), D.z()}));
 
-            if(x > maxBounds.x() || x < minBounds.x()) return;
-            if(y > maxBounds.y() || y < minBounds.y()) return;
-            if(z > maxBounds.z() || z < minBounds.z()) return;
+            minBounds = Vec3(std::min({A.x(), D.x()}),
+                             std::min({A.y(), D.y()}),
+                             std::min({A.z(), D.z()}));
+
+            if(x > maxBounds.x() || x < minBounds.x()) continue;
+            if(y > maxBounds.y() || y < minBounds.y()) continue;
+            if(z > maxBounds.z() || z < minBounds.z()) continue;
 
             p->pos -= (1 + kElastic)*a*norm;
             p->vel -= (1 + kElastic)*norm.dot(p->vel)*norm - kFriction*(p->vel - norm.dot(p->vel)*norm);
