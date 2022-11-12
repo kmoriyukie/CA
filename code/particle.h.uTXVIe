@@ -27,7 +27,7 @@ public:
         vel	    = Vec3(0.0, 0.0, 0.0);
         force   = Vec3(0.0, 0.0, 0.0);
         prevPos = pos;
-        mass    = 0.01;
+        mass    = 1.0;
     }
 
     Particle(const Vec3& p, const Vec3& v, float m) {
@@ -39,17 +39,16 @@ public:
     }
 
     Particle(const Particle& p) {
-        id       = p.id;
-        pos      = p.pos;
-        vel      = p.vel;
-        force    = p.force;
-        prevPos  = p.pos;
-        mass     = p.mass;
-        color    = p.color;
-        radius   = p.radius;
-        life     = p.life;
-        density  = p.density;
-        pressure = p.pressure;
+        id      = p.id;
+        pos     = p.pos;
+        vel     = p.vel;
+        force   = p.force;
+        prevPos = p.pos;
+        mass    = p.mass;
+        color   = p.color;
+        radius  = p.radius;
+        life    = p.life;
+        density = p.density;
     }
 
     ~Particle() {

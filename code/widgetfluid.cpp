@@ -1,9 +1,9 @@
 #include "widgetfluid.h"
 #include "ui_widgetfluid.h"
 
-widgetFluid::widgetFluid(QWidget *parent) :
+WidgetFluid::WidgetFluid(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::widgetFluid)
+    ui(new Ui::WidgetFluid)
 {
     ui->setupUi(this);
 
@@ -11,7 +11,7 @@ widgetFluid::widgetFluid(QWidget *parent) :
             [=] (void) { emit updatedParameters(); });
 }
 
-widgetFluid::~widgetFluid()
+WidgetFluid::~WidgetFluid()
 {
     delete ui;
 }

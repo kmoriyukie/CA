@@ -6,6 +6,8 @@
 #include "scenebb.h"
 #include "sceneclothPBD.h"
 #include "scenecloth.h"
+#include "scenefluid.h"
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -31,6 +33,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionCloth_with_PBD,   &QAction::triggered, this, [=](void){ changeScene(new SceneClothPBD()); });
 
     connect(ui->actionCloth_with_Springs,   &QAction::triggered, this, [=](void){ changeScene(new SceneCloth()); });
+
+    connect(ui->actionFluid,   &QAction::triggered, this, [=](void){ changeScene(new SceneFluid()); });
 
 }
 

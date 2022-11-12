@@ -27,7 +27,7 @@ public:
         vel	    = Vec3(0.0, 0.0, 0.0);
         force   = Vec3(0.0, 0.0, 0.0);
         prevPos = pos;
-        mass    = 0.01;
+        mass    = 1.0;
     }
 
     Particle(const Vec3& p, const Vec3& v, float m) {

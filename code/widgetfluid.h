@@ -1,25 +1,25 @@
-#ifndef widgetFluid_H
-#define widgetFluid_H
+#ifndef WidgetFluid_H
+#define WidgetFluid_H
 
 #include <QWidget>
 
 namespace Ui {
-class widgetFluid;
+class WidgetFluid;
 }
 
-class widgetFluid : public QWidget
+class WidgetFluid : public QWidget
 {
     Q_OBJECT
 public:
-    explicit widgetFluid(QWidget *parent = nullptr);
-    ~widgetFluid();
+    explicit WidgetFluid(QWidget *parent = nullptr);
+    ~WidgetFluid();
 
 
 signals:
     void updatedParameters();
 
 private:
-    Ui::widgetFluid *ui;
+    Ui::WidgetFluid *ui;
 };
 
-#endif // widgetFluid_H
+#endif // WidgetFluid_H

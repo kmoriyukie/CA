@@ -104,9 +104,9 @@ void ColliderBB::collision(Particle* p, double kElastic, double kFriction) const
                              std::min({A.y(), B.y(), C.y(), D.y()}),
                              std::min({A.z(), B.z(), C.z(), D.z()}));
 
-            if(x > maxBounds.x() || x < minBounds.x()) continue;
-            if(y > maxBounds.y() || y < minBounds.y()) continue;
-            if(z > maxBounds.z() || z < minBounds.z()) continue;
+            if(x > maxBounds.x() || x < minBounds.x()) return;
+            if(y > maxBounds.y() || y < minBounds.y()) return;
+            if(z > maxBounds.z() || z < minBounds.z()) return;
 
             p->pos -= (1 + kElastic)*a*norm;
             p->vel -= (1 + kElastic)*norm.dot(p->vel)*norm - kFriction*(p->vel - norm.dot(p->vel)*norm);

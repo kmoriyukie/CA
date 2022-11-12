@@ -141,10 +141,8 @@ void Cloth::updatePositions(ParticleSystem &system){
         pos[3*i + 2] = system.getParticle(i)->pos.z();
     }
 
-
     void *bufptr = vbo->mapRange(0, 3*numParticles*sizeof(float), QOpenGLBuffer::RangeInvalidateBuffer | QOpenGLBuffer::RangeWrite);
     memcpy(bufptr, (void*)(pos), 3*numParticles*sizeof(float));
-
 
     vbo->unmap();
     vbo->release();

@@ -1,0 +1,14 @@
+#include "fluidsystem.h"
+#include "auxfunctions.h"
+void FluidSystem::updateNeighbors(){
+
+    for(Particle *p1 : particles){
+        std::vector<Particle *> list;
+        for(Particle *p2 : particles){
+            if(distance(p1->pos, p2->pos) < threshold){
+                list.push_back(p2);
+            }
+        }
+        neighborlist.push_back(list);
+    }
+}

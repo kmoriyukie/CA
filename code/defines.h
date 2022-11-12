@@ -16,6 +16,8 @@ typedef Eigen::MatrixXd Matd;
 using Random = effolkronium::random_static;
 
 #define PI 3.14159
+#define SPEED_SOUND 10
+
 
 namespace Math {
     template<typename T> int signum(T val) {
@@ -29,6 +31,12 @@ namespace Math {
     inline double toDeg(double a) {
         return a*180.0/M_PI;
     }        
+
+    inline int ceil(double a){
+        double aux = a - int(a);
+        if(aux > 0.5) return int(a) + 1;
+        return int(a);
+    }
 }
 
 

@@ -14,6 +14,7 @@ SOURCES += \
     code/camera.cpp \
     code/colliders.cpp \
     code/constraintsPBD.cpp \
+    code/fluidsystem.cpp \
     code/forces.cpp \
     code/glutils.cpp \
     code/glwidget.cpp \
@@ -34,7 +35,7 @@ SOURCES += \
     code/widgetcloth.cpp \
     code/widgetfluid.cpp \
     code/widgetfountain.cpp \
-    code/widgetprojectiles.cpp
+    code/widgetprojectiles.cpp \
 
 HEADERS += \
     code/auxfunctions.h \
@@ -42,6 +43,7 @@ HEADERS += \
     code/colliders.h \
     code/constraintsPBD.h \
     code/defines.h \
+    code/fluidsystem.h \
     code/forces.h \
     code/glutils.h \
     code/glwidget.h \
@@ -63,7 +65,7 @@ HEADERS += \
     code/widgetcloth.h \
     code/widgetfluid.h \
     code/widgetfountain.h \
-    code/widgetprojectiles.h
+    code/widgetprojectiles.h \
 
 FORMS += \
     forms/mainwindow.ui \

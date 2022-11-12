@@ -58,7 +58,7 @@
             <double>0.010000000000000</double>
            </property>
            <property name="value">
-            <double>0.050000000000000</double>
+            <double>0.030000000000000</double>
            </property>
           </widget>
          </item>
@@ -158,6 +158,7 @@
     <addaction name="actionBounding_Box"/>
     <addaction name="actionSphere"/>
     <addaction name="menuCloth"/>
+    <addaction name="actionFluid"/>
    </widget>
    <widget class="QMenu" name="menuCamera">
     <property name="title">
@@ -220,6 +221,11 @@
   <action name="actionCloth_with_Springs">
    <property name="text">
     <string>Cloth with Springs</string>
+   </property>
+  </action>
+  <action name="actionFluid">
+   <property name="text">
+    <string>Fluid</string>
    </property>
   </action>
  </widget>
