@@ -1,37 +1,38 @@
-# LAB 2
+# LAB 3
 
 ## New Files (only relevant files mentioned)
-- constraintsPBD.h
-- constraintsPBD.cpp
-- myobject.cpp
-- myobject.h
-- scenecloth.cpp
-- scenecloth.h
-- sceneclothPBD.cpp
-- sceneclothPBD.h
+- scenefluid.h
+- scenefluid.cpp
+- fluidsystem.cpp
+- fluidsystem.h
+- particle.h
 
 # Interaction
 ## ALT + Right Click
 Changes cube dimensions
 
 ## CTRL + Right Click
-Changes cloth position
+Changes fluid cube position
 
 # Notes:
-## PBD
-My first attempt to simulate cloth was made using PBD, the code used for it can be found in the constraintsPBD class. Unfortunately, it did not work as it should, as sometimes it would stretch too much and behave almost like a very viscuous fluid. Because of this, and because of feedback received from the professor, I have decided to change my approach and use the method that was originally proposed. 
-
 ## Implementation
-* Myobject class was added to simplify rendering of objects. Most previous scenes have been modified to use my new class.
-* To render the cloth, I created the derived class Cloth from MyObject, using the code provided by the professor in the class slides. 
-* Used a different shader for the cloth and the other objects.
+- Added density and pressure attributes to particle class
+- Made a FluidSystem that's derived from the ParticleSysten subclass
+- Used the formulas in the linked article (Particle-Based Fluid Simulation for Interactive Applications by Matthias Muller et al.) to implement the particle interactions, using the following steps:
+    - Compute particle neighbors.
+    - Calculate particle density.
+    - Calculate particle pressure, with sound speed (SPEED_SOUND) equal to 10.
+    - Calculate accelerations, using the data obtained previously.
+
+## Ideas on how to improve
+- Fix cube hitbox bug, possibly rewriting the code in its entirety,
+- Reduce loops, or find another way to make code less computationally expensive.
 
 ## Issues
-# Cube Hitbox
-There is an expected interaction between my cloth and the hitbox of the cube. When the cloth touches the "upper right edge" or "back edge" (considering the initial view of the scene), the cloth will slip and fall off the cube.
-
-# Couldn't make floor color appear correctly
-There is probably an issue with the way I'm rendering it. It has definitely something to do with the shaders.
+### Runtine Issues
+The application runs really slowly if using more than 1000 particles in the fluid system.
+### Cube Hitbox
+There is an expected interaction between my cloth, sometimes the particles will fall off the edges of the cube. That is possibly due to an error in the logic I used for the hitbox calculation.
 
 ## Github
 This project can also be found in my Github repository:
